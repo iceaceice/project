@@ -1,0 +1,79 @@
+How To Install Linux, Apache, MySQL, PHP (LAMP) stack on Ubuntu 18.04
+
+Step 1 — Installing Apache and Updating the Firewall
+
+* sudo apt update
+* sudo apt install apache2
+
+
+Adjust the Firewall to Allow Web Traffic
+
+*sudo ufw app list
+*sudo ufw app info "Apache Full"
+*sudo ufw allow in "Apache Full"
+
+You can do a spot check right away to verify that everything went as planned by visiting your server’s public IP address in your web browser (see the note under the next heading to find out what your public IP address is if you do not have this information already):
+
+http://your_server_ip
+You will see the default Ubuntu 18.04 Apache web page, which is there for informational and testing purposes. It should look something like this:
+
+
+Step 2 — Installing MySQL
+
+*sudo apt install mysql-server
+
+	Note: In this case, you do not have to run sudo apt update prior to the command. This is because you recently ran it in the commands above to install Apache. The package index on your computer should already be up-to-date.
+
+*sudo mysql_secure_installation
+
+Step 3 — Installing PHP
+
+*sudo apt install php libapache2-mod-php php-mysql
+*sudo nano /etc/apache2/mods-enabled/dir.conf
+*sudo systemctl restart apache2
+*sudo systemctl status apache2
+*apt search php- | less
+
+Step 4 — Setting Up Virtual Hosts (Recommended)
+
+*sudo mkdir /var/www/your_domain
+*sudo chown -R $USER:$USER /var/www/your_domain
+*sudo chmod -R 755 /var/www/your_domain
+*nano /var/www/your_domain/index.html
+
+	Inside, add the following sample HTML:
+
+/var/www/your_domain/index.html
+<html>
+    <head>
+        <title>Welcome to Your_domain!</title>
+    </head>
+    <body>
+        <h1>Success!  The your_domain server block is working!</h1>
+    </body>
+</html>
+
+*sudo nano /etc/apache2/sites-available/your_domain.conf
+*sudo a2ensite your_domain.conf
+*sudo a2dissite 000-default.conf
+*sudo apache2ctl configtest
+*sudo systemctl restart apache2
+
+Step 5 — Testing PHP Processing on your Web Server
+
+*sudo nano /var/www/your_domain/info.php
+
+This will open a blank file. Add the following text, which is valid PHP code, inside the file:
+
+info.php
+<?php
+phpinfo();
+?>
+
+http://your_domain/info.php
+
+
+
+You probably want to remove this file after this test because it could actually give information about your server to unauthorized users. To do this, run the following command:
+
+sudo rm /var/www/your_domain/info.php
